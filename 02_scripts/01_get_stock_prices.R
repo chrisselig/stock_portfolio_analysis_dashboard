@@ -69,14 +69,14 @@ stock_data_tidy_function <- function(stockPrices,
 
 
  
-# Testing----
-library(quantmod)
-library(tidyverse)
-library(tibbletime)
-
-symbols <- c("TSLA","AAPL")
-
-prices <- get_stock_data_function(stockSymbols = symbols, startDate = "2015-01-01", endDate = "2019-12-31")
-
-stock_data_tidy_function(stockPrices = prices, timePeriod = "monthly")
-stock_data_tidy_function(stockPrices = prices, timePeriod = "yearly")
+# # Testing----
+# library(quantmod)
+# library(tidyverse)
+# library(tibbletime)
+# 
+# symbols <- c("TSLA","AAPL")
+# 
+# prices <- get_stock_data_function(stockSymbols = symbols, startDate = "2015-01-01", endDate = "2019-12-31")
+# 
+# stock_data_tidy_function(stockPrices = prices, timePeriod = "monthly")
+# stock_data_tidy_function(stockPrices = prices, timePeriod = "yearly")
