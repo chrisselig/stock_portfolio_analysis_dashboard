@@ -1,0 +1,39 @@
+div #title_bar{
+    background-color:#526D7A;
+    text-align:right;
+    padding: 10px;
+    color:white;
+}
+
+.well{
+    background-color:#FFFFF3;
+}
+
+ul{
+    list-style-type:none;
+    margin: 0;
+    padding: 0;
+}
+
+li{
+    margin:10px 0;
+}
+
+div .social{
+    width: 100%;
+    text-align: center;
+}
+    
+div .social_icons{
+    font-size: 25px;
+    display:inline-block;
+    line-height: 50px;
+    background-color:#FFFFF3;
+    height: 50px;
+    text-align: center;
+    vertical-align: bottom;
+}
+
+p .subheader{
+    font-weight: bold;
+}
