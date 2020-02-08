@@ -1,5 +1,5 @@
-div #title_bar{
-    background-color:#526D7A;
+div #container-fluid{
+    background-color:red;
     text-align:right;
     padding: 10px;
     color:white;

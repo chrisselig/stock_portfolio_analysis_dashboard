@@ -1,6 +1,6 @@
-# Script is used to load functions related to getting and cleaning stock data ----
+# Scripts are used within the Shiny App ----
 
-
+# 1.0 Getting and Cleaning Stock Data ----
 # Function is used to get data from selected stock index ----
 get_stock_data_function <- function(stockSymbols,
                                     startDate, 
@@ -67,14 +67,17 @@ stock_data_tidy_function <- function(stockPrices,
 }
 
 
+# 2.0 Simulation Functions ----
+
 
  
-# # Testing----
+# 3.0 Testing----
+
 # library(quantmod)
 # library(tidyverse)
 # library(tibbletime)
-# 
-# symbols <- c("TSLA","AAPL")
+
+# symbols <- c("TSLA","AAPL",'QLD')
 # 
 # prices <- get_stock_data_function(stockSymbols = symbols, startDate = "2015-01-01", endDate = "2019-12-31")
 # 

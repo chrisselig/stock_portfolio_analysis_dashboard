@@ -15,6 +15,9 @@ library(quantmod)
 library(tidyverse)
 library(tibbletime)
 
+# Plotting functions
+library(plotly)
+
 
 # Source Scripts ----
 source("../02_scripts/01_get_stock_prices.R")
@@ -32,6 +35,7 @@ ui <- navbarPage(
     # 1.0 Portfolio Simulation Page ----
     tabPanel(
         
+        
         # ** CSS ----
         tags$head(
             tags$link(rel = "stylesheet", type = "text/css", href = "styles.css")
@@ -43,10 +47,15 @@ ui <- navbarPage(
         title = "Portfolio Simulation",
         
         div(
-            
+            class = "title_bar",
             # 1.3 Portfolio Simulation ----
             column(
-                width = 8
+                width = 8,
+                div(
+                    plotlyOutput(
+                        outputId = "simulation_line_plot"
+                    )
+                )
             ),
             
             # 1.4 Filters ----
@@ -61,7 +70,7 @@ ui <- navbarPage(
                         column(
                             width = 5,
                             textInput(
-                                inputId = "input_stock1_symbol",
+                                inputId = "input_stock1",
                                 label = 'Stock 1'
                             )
                         ),
@@ -83,7 +92,7 @@ ui <- navbarPage(
                         column(
                             width = 5,
                             textInput(
-                                inputId = "input_stock2_symbol",
+                                inputId = "input_stock2",
                                 label = 'Stock 2'
                             )
                         ),
@@ -104,7 +113,7 @@ ui <- navbarPage(
                         column(
                             width = 5,
                             textInput(
-                                inputId = "input_stock3_symbol",
+                                inputId = "input_stock3",
                                 label = 'Stock 3'
                             )
                         ),
@@ -125,7 +134,7 @@ ui <- navbarPage(
                         column(
                             width = 5,
                             textInput(
-                                inputId = "input_stock4_symbol",
+                                inputId = "input_stock4",
                                 label = 'Stock 4'
                             )
                         ),
@@ -146,7 +155,7 @@ ui <- navbarPage(
                         column(
                             width = 5,
                             textInput(
-                                inputId = "input_stock5_symbol",
+                                inputId = "input_stock5",
                                 label = 'Stock 5'
                             )
                         ),
@@ -244,10 +253,46 @@ ui <- navbarPage(
     
 )
 
-# Define server logic required to draw a histogram
-server <- function(input, output) {
+# Server Logic ----
+server <- function(input, output,session) {
 
+    # Get list of stocks ----
+    prices <- eventReactive(input$btn_simualate,{
+        
+        symbols <- c(input$input_stock1, input$input_stock2, input$input_stock3, input$input_stock4, input$input_stock5)
+        # symbols <- c("QLD","PNQI","AAPL")
+        
+        # Get stock prices & Tidy Data ----
+        prices <- get_stock_data_function(stockSymbols = symbols(), startDate = "2015-01-01", endDate = "2019-12-31") %>%
+            stock_data_tidy_function(timePeriod = "monthly")
+        
+        prices <- stock_data_tidy_function(stockPrices = prices, timePeriod = "monthly")   
+        
+    })
 
+    
+    # Simulation plot ----
+    sims <- eventReactive(input$btn_simulate, {input$input_num_sims})
+    
+    monte_carlo_sims <- eventReactive(input$btn_simulate, { 
+        
+        sims <- sims()
+        
+        starts <-  
+            rep(1, sims) %>%
+            set_names(paste("sim", 1:sims, sep = ""))
+        
+        map_dfc(starts, simulation_accum_1,
+                N = input$sim_months, mean = mean_port_return(), 
+                stdev = stddev_port_return()) %>% 
+            mutate(month = seq(1:nrow(.))) %>% 
+            select(month, everything()) %>% 
+            `colnames<-`(c("month", names(starts))) %>% 
+            gather(sim, growth, -month) %>% 
+            group_by(sim) %>% 
+            mutate_all(funs(round(., 2)))
+        
+    })
     
 }
 
