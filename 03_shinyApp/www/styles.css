@@ -1,39 +1,35 @@
-div #container-fluid{
-    background-color:red;
-    text-align:right;
-    padding: 10px;
-    color:white;
+/* Hide Button 
+#hide_button{
+  float:right;
+}
+*/
+
+/* Navbar */
+.navbar{
+  background-color:#4C586F;
 }
 
-.well{
-    background-color:#FFFFF3;
+body{
+  color:;#A2AAB0;
 }
 
-ul{
-    list-style-type:none;
-    margin: 0;
-    padding: 0;
+li a{
+  padding-top:0;
+  padding-bottom:0;
+  letter-spacing:0.15em;
+  color: #EBECED;
 }
 
-li{
-    margin:10px 0;
-}
 
-div .social{
-    width: 100%;
-    text-align: center;
-}
-    
-div .social_icons{
-    font-size: 25px;
-    display:inline-block;
-    line-height: 50px;
-    background-color:#FFFFF3;
-    height: 50px;
-    text-align: center;
-    vertical-align: bottom;
-}
 
-p .subheader{
-    font-weight: bold;
+.navbar .navbar-nav li a:hover, .navbar1 .navbar-nav > .active > a {
+  color: #EBECED !important;
+  background-color:#3E3E3B; !important;
 }
+/*
+.btn{
+  font-size:0.7em;
+  padding:2px 10px 2px 10px;
+}
+*/
+
