@@ -10,7 +10,7 @@
 }
 
 body{
-  color:;#A2AAB0;
+  color:#A2AAB0;
 }
 
 li a{
@@ -24,7 +24,7 @@ li a{
 
 .navbar .navbar-nav li a:hover, .navbar1 .navbar-nav > .active > a {
   color: #EBECED !important;
-  background-color:#3E3E3B; !important;
+  background-color:#3E3E3B !important;
 }
 /*
 .btn{
