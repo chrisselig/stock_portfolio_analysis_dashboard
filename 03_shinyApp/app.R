@@ -26,6 +26,7 @@ library(plotly)
 
 # Source Scripts ----
 source("../02_scripts/01_get_stock_prices.R")
+source("../02_scripts/02_plotting_functions.R")
 
 # Define UI for application that draws a histogram
 ui <- navbarPage(
@@ -300,7 +301,11 @@ ui <- navbarPage(
               ),
               fluidRow(
                 column(width = 6),
-                column(width = 6)
+                # Visualize Individual Asset Returns
+                column(
+                  width = 6,
+                  plotlyOutput("returnsPlot")
+                )
               ),
               fluidRow(
                 column(width = 6),
@@ -363,6 +368,17 @@ server <- function(input, output,session) {
     # output$portfolio_sd <- portfolio_sd()
     # 
     # Sum up weights to ensure it is not greater than 100% ----
+    
+    # 2.1.2 Render Returns Plot ----
+    returns_chart <- reactive({
+      line_chart_function(returns_tbl(),
+                          y_axis = returns_tbl()$weighted_returns,
+                          title = "Log Returns for Selected Assets",
+                          y_axis_label = "Log Returns"
+                          )
+    })
+    
+    output$returnsPlot <- renderPlotly(returns_chart())
     
     # output$value <- renderText({input$input_stock1})
     # # Show/Hide Filter Bar ----
