@@ -10,7 +10,7 @@ library(shiny)
 library(shinyWidgets)
 library(shinythemes)
 library(shinyjs)
-library(shinydashboard)
+#library(shinydashboard)
 
 # Data manipulation functions
 library(quantmod)
@@ -18,6 +18,7 @@ library(tidyverse)
 # library(tidyquant)
 library(tibbletime)
 library(lubridate)
+library(scales)
 
 # Plotting functions
 library(plotly)
@@ -74,8 +75,8 @@ ui <- navbarPage(
                 textInput(
                   inputId = "input_stock2",
                   label = 'Stock 2',
-                  placeholder = "BTC-USD",
-                  value = "BTC-USD"
+                  placeholder = "TSLA",
+                  value = "TSLA"
                 )
               ),
               column(
@@ -348,7 +349,7 @@ server <- function(input, output,session) {
     })
     
     
-    output$returns_tbl <- renderTable(stock_symbols())
+    output$returns_tbl <- renderTable(returns_tbl())
     output$stocksymbol <- renderTable(stock_prices())
     
     # 2.0 Portfolio Analysis Tab ----

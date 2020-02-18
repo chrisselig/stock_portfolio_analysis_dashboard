@@ -22,35 +22,6 @@ get_stock_data_function <- function(data,
         `colnames<-`(stocks) # change the column names to the symbol names
 }
 
-
-# 1.2 Function is used to switch between daily, monthly, and annual data processing ----
-# stock_data_tidy_function <- function(stockPrices,
-#                                      timePeriod = "monthly"){
-#     
-#     
-#     
-#     if(timePeriod == "monthly"){
-#         prices_tidy <- stockPrices %>% 
-#             to.monthly(indexAt = "lastof", OHLC = FALSE) #%>% 
-#             #calculate_returns_function()
-#     } else if(timePeriod == "daily") {
-#         prices_tidy <- stockPrices %>% 
-#             to.daily(indexAt = "lastof", OHLC = FALSE) #%>% 
-#             #calculate_returns_function()
-#     } else if(timePeriod == "weekly"){
-#         prices_tidy <- stockPrices %>% 
-#             to.weekly(indexAt = "lastof", OHLC = FALSE) #%>% 
-#             #calculate_returns_function()
-#     } else {
-#         prices_tidy <- stockPrices %>% 
-#             to.yearly(indexAt = "lastof", OHLC = FALSE) #%>% 
-#             #calculate_returns_function()
-#     }
-#     
-#     return(prices_tidy)
-# }
-
-
 # 1.2 Calculate Returns ----
 calculate_returns_function <- function(data,weights_tbl,timePeriod){
     
@@ -83,7 +54,11 @@ calculate_returns_function <- function(data,weights_tbl,timePeriod){
         na.omit() %>% 
         rename(asset = name) %>% 
         left_join(weights_tbl, by = c('asset' = 'symbols')) %>% 
-        mutate(weighted_returns = returns * weights)
+        mutate(weighted_returns = returns * weights) %>%
+        mutate(weighted_returns_formatted = scales::percent(weighted_returns,accuracy = 0.01)) %>% 
+        mutate(label_text = str_glue('Asset: {asset}
+                                    Return: {weighted_returns_formatted}
+                                    Date: {date}'))
         
     return(data)
 }
@@ -94,23 +69,20 @@ calculate_returns_function <- function(data,weights_tbl,timePeriod){
  
 # 3.0 Testing----
 
-#  library(quantmod)
-#  library(tidyverse)
-#  library(tibbletime)
-# # # #  
-# # # # 
-# symbols <- c("TSLA","AAPL",'QLD','BTC-USD')
-# weights <- c(35,20,25,20)
+# library(quantmod)
+# library(tidyverse)
+# library(tibbletime)
+#  
+# symbols <- c("TSLA","AAPL",'QLD')
+# weights <- c(35,20,25)
 # data <- data.frame(symbols, weights)
 # data <- na.omit(data)
-# # # 
-# #  stockSymbols <- df
-# # # 
-# # startDate = "2015-01-01"
-# # endDate = "2019-12-31"
-# # # 
+# 
+# startDate = "2015-01-01"
+# endDate = "2019-12-31"
+# 
 # prices <- get_stock_data_function(data, startDate = "2015-01-01", endDate = "2019-12-31")
-# prices_month <- stock_data_tidy_function(prices, timePeriod = "monthly")
-#calculate_returns_function(prices_month)
-# stock_data_tidy_function(stockPrices = prices, timePeriod = "yearly")
+# 
+# weighted_returns <- calculate_returns_function(prices,data,timePeriod = "monthly")
+
 
