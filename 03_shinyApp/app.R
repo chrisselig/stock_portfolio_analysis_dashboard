@@ -47,7 +47,7 @@ ui <- navbarPage(
           "GENERAL INPUTS",
           # 1.0 Filter Panel ----
           column(
-            width = 9,
+            width = 6,
             # 1.1.1 Stock 1 ----
             fluidRow(
               column(
@@ -271,6 +271,16 @@ ui <- navbarPage(
             )
             
           ),
+          # 1.1.11 Market or Comparision Asset ----
+          column(
+            width = 3,
+            textInput(
+              inputId = "input_market",
+              label = 'Market Comparision Asset',
+              placeholder = 'SPY',
+              value = 'SPY'
+            )
+          ),
           column(
             width = 3,
             h2("Disclaimer"),
@@ -360,8 +370,8 @@ server <- function(input, output,session) {
     
     # Get List of Stocks and Weights ----
     stock_symbols <- eventReactive(input$btn_calculate,{
-        symbols <- c(input$input_stock1, input$input_stock2, input$input_stock3, input$input_stock4, input$input_stock5)
-        weights <- c(input$input_stock1_weight/100,input$input_stock2_weight/100,input$input_stock3_weight/100,input$input_stock4_weight/100,input$input_stock5_weight/100)
+        symbols <- c(input$input_stock1, input$input_stock2, input$input_stock3, input$input_stock4, input$input_stock5,input$input_market)
+        weights <- c(input$input_stock1_weight/100,input$input_stock2_weight/100,input$input_stock3_weight/100,input$input_stock4_weight/100,input$input_stock5_weight/100,100/100)
         df <- data.frame(symbols, weights) %>% 
           na.omit()
     },ignoreNULL = FALSE)
