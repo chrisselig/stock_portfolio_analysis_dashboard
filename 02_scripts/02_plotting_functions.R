@@ -49,9 +49,9 @@ line_chart_function <- function(data,
 # 
 # prices <- get_stock_data_function(data, startDate = "2015-01-01", endDate = "2019-12-31")
 # 
-# weighted_returns_tbl <- calculate_returns_function(prices,data,timePeriod = "monthly")
+# returns_tbl <- calculate_returns_function(prices,data,timePeriod = "monthly")
 # 
-# data <- weighted_returns_tbl
-# y_axis <- weighted_returns_tbl$weighted_returns
+# data <- returns_tbl
+# y_axis <- returns_tbl$returns
 # y_axis_label <- 'Log Returns'
 # title = 'Log Returns for Selected Assets'

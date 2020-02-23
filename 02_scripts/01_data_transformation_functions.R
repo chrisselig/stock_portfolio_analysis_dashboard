@@ -52,37 +52,69 @@ calculate_returns_function <- function(data,weights_tbl,timePeriod){
         select(-value) %>% 
         ungroup() %>% 
         na.omit() %>% 
-        rename(asset = name) %>% 
-        left_join(weights_tbl, by = c('asset' = 'symbols')) %>% 
-        mutate(weighted_returns = returns * weights) %>%
-        mutate(weighted_returns_formatted = scales::percent(weighted_returns,accuracy = 0.01)) %>% 
-        mutate(label_text = str_glue('Asset: {asset}
-                                    Return: {weighted_returns_formatted}
-                                    Date: {date}'))
+        rename(asset = name)
         
+        # Calculate Portfolio Returns
+    portfolio <- data %>% 
+        left_join(weights_tbl, by = c('asset' = 'symbols')) %>% 
+        mutate(weighted_returns = returns * weights) %>% 
+        group_by(date) %>% 
+        summarize(returns = sum(weighted_returns)) %>% 
+        mutate(asset = 'Portfolio')
+    
+    # Combine both invidual assets and portfolio into single tibble
+    data <- data %>% 
+        bind_rows(portfolio) %>% 
+        mutate(returns_formatted = scales::percent(returns,accuracy = 0.01)) %>% 
+        mutate(label_text = str_glue('Asset: {asset}
+                                    Return: {returns_formatted}
+                                    Date: {date}'))
+
+    
     return(data)
 }
 
-# 2.0 Simulation Functions ----
+# 2.0 Rolling Calculations ----
+
+rolling_calculation_function <- function(data, window, .func, func_label){
+    rolling_func <- rollify(.func,window = window)
+    
+    label_function <- func_label
+    
+    data %>% 
+        as_tbl_time(index = date) %>% 
+        mutate(value = round(rolling_func(returns),4)) %>% 
+        na.omit() %>% 
+        mutate(label_text = str_glue('Asset: {asset}
+                                    {label_function}: {value}
+                                    Date: {date}'))
+}
+
+
+
+# 3.0 Simulation Functions ----
 
 
  
-# 3.0 Testing----
-
-# library(quantmod)
-# library(tidyverse)
-# library(tibbletime)
+# 4.0 Testing----
+# 
+#  library(quantmod)
+#  library(tidyverse)
+#  library(tibbletime)
+#   
+#  symbols <- c("TSLA","AAPL",'QLD')
+#  weights <- c(35,20,25)
+#  data <- data.frame(symbols, weights)
+#  data <- na.omit(data)
+#  weights_tbl <- data.frame(symbols, weights)
+#  timePeriod = "monthly"
 #  
-# symbols <- c("TSLA","AAPL",'QLD')
-# weights <- c(35,20,25)
-# data <- data.frame(symbols, weights)
-# data <- na.omit(data)
+#  startDate = "2015-01-01"
+#  endDate = "2019-12-31"
+#  
+#  prices <- get_stock_data_function(data, startDate = "2015-01-01", endDate = "2019-12-31")
+#  
+#  data <- prices
+#  weighted_returns <- calculate_returns_function(prices,data,timePeriod = "monthly")
 # 
-# startDate = "2015-01-01"
-# endDate = "2019-12-31"
-# 
-# prices <- get_stock_data_function(data, startDate = "2015-01-01", endDate = "2019-12-31")
-# 
-# weighted_returns <- calculate_returns_function(prices,data,timePeriod = "monthly")
-
-
+#  x <- rolling_calculation_function(weighted_returns_tbl, window = 24,.func = sd, func_label = "Standard Dev.")

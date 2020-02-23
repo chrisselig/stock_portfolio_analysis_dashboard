@@ -19,13 +19,15 @@ library(tidyverse)
 library(tibbletime)
 library(lubridate)
 library(scales)
+library(e1071)
 
 # Plotting functions
+library(ggthemes)
 library(plotly)
 
 
 # Source Scripts ----
-source("../02_scripts/01_get_stock_prices.R")
+source("../02_scripts/01_data_transformation_functions.R")
 source("../02_scripts/02_plotting_functions.R")
 
 # Define UI for application that draws a histogram
@@ -300,16 +302,40 @@ ui <- navbarPage(
                 column(width = 3)
               ),
               fluidRow(
-                column(width = 6),
-                # Visualize Individual Asset Returns
                 column(
                   width = 6,
-                  plotlyOutput("returnsPlot")
+                  # 2.2 Rolling Calculations ----
+                  tabsetPanel(
+                    type = "tabs",
+                    # 2.2.1 Visualize Sd ----
+                    tabPanel("Standard Deviation",plotlyOutput("rollingStd")),
+                    # 2.2.2 Visualize Kurtosis ----
+                    tabPanel("Kurtosis",plotlyOutput("rollingkurt")),
+                    # 2.2.3 Visualize Skewness ----
+                    tabPanel("Skewness",plotlyOutput("rollingskew"))
+                  )
+                ),
+                # 2.3 Visualize Individual Asset Returns & Portfolio ----
+                column(
+                  width = 6,
+                  tabsetPanel(
+                    type = "tabs",
+                    tabPanel("Returns",plotlyOutput("returnsPlot"))
+                  )
                 )
               ),
               fluidRow(
+                # 
                 column(width = 6),
-                column(width = 6)
+                # 2.5 Visualize Covariance ----
+                column(
+                  width = 6,
+                  # 2.5.2 Visualize Rolling Covariance ----
+                  tabsetPanel(
+                    type = "tabs",
+                    tabPanel("Rolling Covariance",plotlyOutput("rollingcovar"))
+                  )
+                  )
               )
             )
         ),
@@ -369,16 +395,79 @@ server <- function(input, output,session) {
     # 
     # Sum up weights to ensure it is not greater than 100% ----
     
-    # 2.1.2 Render Returns Plot ----
+    # 2.2 Rolling Calculations ----
+    # 2.2.1 Rolling Standard Deviation ----
+    rolling_sd <- reactive({
+      rolling_calculation_function(returns_tbl(), window = input$input_window,.func = sd,func_label = "Standard Dev.")
+    })
+    
+    rolling_sd_chart <- reactive({
+      line_chart_function(rolling_sd(),
+                          y_axis = rolling_sd()$value,
+                          title = paste0("Rolling ",input$input_window," Period Standard Deviation"),
+                          y_axis_label = "Standard Deviation")
+    })
+    
+    output$rollingStd <- renderPlotly(rolling_sd_chart())
+    
+    # 2.2.2 Rolling Kurtosis ----
+    rolling_kurt <- reactive({
+      rolling_calculation_function(returns_tbl(), window = input$input_window,.func = kurtosis,func_label = "Kurtosis")
+    })
+    
+    rolling_kurtosis_chart <- reactive({
+      line_chart_function(rolling_kurt(),
+                          y_axis = rolling_kurt()$value,
+                          title = paste0("Rolling ",input$input_window," Period Kurtosis"),
+                          y_axis_label = "Kurtosis")
+    })
+    
+    output$rollingkurt <- renderPlotly(rolling_kurtosis_chart())
+    
+    # 2.2.3 Rolling Skewness ----
+    rolling_skew <- reactive({
+      rolling_calculation_function(returns_tbl(), window = input$input_window,.func = skewness,func_label = "Skewness")
+    })
+    
+    rolling_skewness_chart <- reactive({
+      line_chart_function(rolling_skew(),
+                          y_axis = rolling_skew()$value,
+                          title = paste0("Rolling ",input$input_window," Period Skewness"),
+                          y_axis_label = "Skewness")
+    })
+    
+    output$rollingskew <- renderPlotly(rolling_skewness_chart())
+    
+    
+    # 2.3 Returns ----
+    # 2.3.1 Render Returns Plot ----
     returns_chart <- reactive({
       line_chart_function(returns_tbl(),
-                          y_axis = returns_tbl()$weighted_returns,
+                          y_axis = returns_tbl()$returns,
                           title = "Log Returns for Selected Assets",
                           y_axis_label = "Log Returns"
                           )
     })
     
     output$returnsPlot <- renderPlotly(returns_chart())
+    
+    # 2.5 Covariance ----
+    
+    # 2.5.1 Total Covariance ----
+    
+    # 2.5.2 Rolling Covariance ----
+    rolling_covar <- reactive({
+      rolling_calculation_function(returns_tbl(), window = input$input_window,.func = cov,func_label = "Covariance")
+    })
+    
+    rolling_covar_chart <- reactive({
+      line_chart_function(rolling_covar(),
+                          y_axis = rolling_covar()$value,
+                          title = paste0("Rolling ",input$input_window," Period Covariance"),
+                          y_axis_label = "Covariance")
+    })
+    
+    output$rollingcovar <- renderPlotly(rolling_covar_chart())
     
     # output$value <- renderText({input$input_stock1})
     # # Show/Hide Filter Bar ----
