@@ -45,7 +45,7 @@ ui <- navbarPage(
         tabPanel(
           class = "tabPanel",
           "GENERAL INPUTS",
-          # 1.0 Filter Panel ----
+          h2("Portfolio Inputs"),
           column(
             width = 6,
             # 1.1.1 Stock 1 ----
@@ -155,63 +155,12 @@ ui <- navbarPage(
                 )
               )
             ),
-            
-            # 1.1.6 Start & End Dates ----
-            fluidRow(
-              column(
-                width = 6,
-                dateInput(
-                  inputId = "input_start_date",
-                  label = "Start Date",
-                  value = "2015-01-01"
-                )
-              ),
-              column(
-                width = 6,
-                dateInput(
-                  inputId = "input_end_date",
-                  label = "End Date",
-                  value = today()-1
-                )
-              )
-            ),
-            
+
             hr(),
-            
-            # 1.1.7 Window & Calculate Button ----
-            fluidRow(
-              column(
-                width = 4,
-                numericInput(
-                  inputId = "input_window",
-                  label = "Rolling Period (Window)",
-                  value = 12L,
-                  min = 2L
-                )
-              ),
-              column(
-                width = 4,
-                selectInput(
-                  inputId = "input_timePeriod",
-                  label = "Returns Time Period",
-                  choices = c('daily','weekly','monthly','yearly'),
-                  selected = "monthly"
-                )
-              ),
-              div(
-                column(
-                  width = 4,
-                  actionButton(
-                    inputId = "btn_calculate",
-                    label = "Analyze"
-                  )
-                )
-              )
-            ),
-            
             
             # 1.1.8 Simulation Inputs ----
             # 1.1.8.1 Period & Number of Sims ----
+            h2("Simulation Inputs"),
             fluidRow(
               column(
                 width = 4,
@@ -279,6 +228,56 @@ ui <- navbarPage(
               label = 'Market Comparision Asset',
               placeholder = 'SPY',
               value = 'SPY'
+            ),
+            
+            # 1.1.6 Start & End Dates ----
+            fluidRow(
+              column(
+                width = 6,
+                dateInput(
+                  inputId = "input_start_date",
+                  label = "Start Date",
+                  value = "2015-01-01"
+                )
+              ),
+              column(
+                width = 6,
+                dateInput(
+                  inputId = "input_end_date",
+                  label = "End Date",
+                  value = today()-1
+                )
+              )
+            ),
+    
+            # 1.1.7 Window & Calculate Button ----
+            fluidRow(
+              column(
+                width = 4,
+                numericInput(
+                  inputId = "input_window",
+                  label = "Rolling Period (Window)",
+                  value = 12L,
+                  min = 2L
+                )
+              ),
+              column(
+                width = 4,
+                selectInput(
+                  inputId = "input_timePeriod",
+                  label = "Returns Time Period",
+                  choices = c('daily','weekly','monthly','yearly'),
+                  selected = "monthly"
+                ),
+              )
+            ),
+            hr(),
+            column(
+              width = 4,
+              actionButton(
+                inputId = "btn_calculate",
+                label = "Analyze"
+              )
             )
           ),
           column(
@@ -303,49 +302,62 @@ ui <- navbarPage(
             
             # * JS ----
             shinyjs::useShinyjs(),
-            
-            div(
-              fluidRow(
-                column(width = 3),
-                column(width = 3),
-                column(width = 3),
-                column(width = 3)
-              ),
-              fluidRow(
-                column(
-                  width = 6,
-                  # 2.2 Rolling Calculations ----
-                  tabsetPanel(
-                    type = "tabs",
-                    # 2.2.1 Visualize Sd ----
-                    tabPanel("Standard Deviation",plotlyOutput("rollingStd")),
-                    # 2.2.2 Visualize Kurtosis ----
-                    tabPanel("Kurtosis",plotlyOutput("rollingkurt")),
-                    # 2.2.3 Visualize Skewness ----
-                    tabPanel("Skewness",plotlyOutput("rollingskew"))
+            column(
+              width = 10,
+              div(
+                fluidRow(
+                  column(width = 3),
+                  column(width = 3),
+                  column(width = 3),
+                  column(width = 3)
+                ),
+                fluidRow(
+                  column(
+                    width = 6,
+                    # 2.2 Rolling Calculations ----
+                    tabsetPanel(
+                      type = "tabs",
+                      # 2.2.1 Visualize Sd ----
+                      tabPanel("Standard Deviation",plotlyOutput("rollingStd")),
+                      # 2.2.2 Visualize Kurtosis ----
+                      tabPanel("Kurtosis",plotlyOutput("rollingkurt")),
+                      # 2.2.3 Visualize Skewness ----
+                      tabPanel("Skewness",plotlyOutput("rollingskew"))
+                    )
+                  ),
+                  # 2.3 Visualize Individual Asset Returns & Portfolio ----
+                  column(
+                    width = 6,
+                    tabsetPanel(
+                      type = "tabs",
+                      tabPanel("Returns",plotlyOutput("returnsPlot"))
+                    )
                   )
                 ),
-                # 2.3 Visualize Individual Asset Returns & Portfolio ----
-                column(
-                  width = 6,
-                  tabsetPanel(
-                    type = "tabs",
-                    tabPanel("Returns",plotlyOutput("returnsPlot"))
+                fluidRow(
+                  # 
+                  column(width = 6),
+                  # 2.5 Visualize Covariance ----
+                  column(
+                    width = 6,
+                    # 2.5.2 Visualize Rolling Covariance ----
+                    tabsetPanel(
+                      type = "tabs",
+                      tabPanel("Rolling Covariance",plotlyOutput("rollingcovar"))
+                    )
                   )
                 )
+              )
+            ),
+            # 2.6 Links to yahoo quote page ----
+            column(
+              width = 2,
+              fluidRow(
+                h2('Further Information for Selected Assets')
               ),
               fluidRow(
-                # 
-                column(width = 6),
-                # 2.5 Visualize Covariance ----
-                column(
-                  width = 6,
-                  # 2.5.2 Visualize Rolling Covariance ----
-                  tabsetPanel(
-                    type = "tabs",
-                    tabPanel("Rolling Covariance",plotlyOutput("rollingcovar"))
-                  )
-                  )
+                # htmlOutput()
+                tableOutput('links')
               )
             )
         ),
@@ -479,6 +491,15 @@ server <- function(input, output,session) {
     
     output$rollingcovar <- renderPlotly(rolling_covar_chart())
     
+    # 2.6 Links to Quote Pages at Yahoo Finance ----
+    links_tbl <- reactive({
+      stock_symbols()$symbols %>% 
+        mutate(symbols2 = as.character(symbols2)) %>% 
+        filter(symbols2 == 'Portfolio') %>% 
+        mutate(website_link = paste0('https://finance.yahoo.com/quote/',symbols2))
+    })
+    
+    output$links <- renderTable(links_tbl())
     # output$value <- renderText({input$input_stock1})
     # # Show/Hide Filter Bar ----
     # observeEvent(input$filter_selector, {
