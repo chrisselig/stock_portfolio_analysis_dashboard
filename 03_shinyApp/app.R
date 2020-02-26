@@ -335,8 +335,14 @@ ui <- navbarPage(
                   )
                 ),
                 fluidRow(
-                  # 
-                  column(width = 6),
+                  # 2.4 Component Contribution to Standard Deviation ---- 
+                  column(
+                    width = 6,
+                    tabsetPanel(
+                      type = "tabs",
+                      tabPanel("Component Contribution",plotlyOutput('compContBar'))
+                    )
+                    ),
                   # 2.5 Visualize Covariance ----
                   column(
                     width = 6,
@@ -388,6 +394,11 @@ server <- function(input, output,session) {
           na.omit()
     },ignoreNULL = FALSE)
   
+    # Get Weights ----
+    stock_weights_tbl <- reactive({
+      stock_symbols()
+    })
+    
     # Get Stock Prices ----
     stock_prices <- reactive({
         get_stock_data_function(stock_symbols(), startDate = input$input_start_date, endDate = input$input_end_date)
@@ -397,8 +408,8 @@ server <- function(input, output,session) {
     returns_tbl <- reactive({
         # timePeriod <- input$input_timePeriod
         # weights <- c(input$input_stock1_weight,input$input_stock2_weight,input$input_stock3_weight,input$input_stock4_weight,input$input_stock5_weight)
-      stock_weights_tbl <- stock_symbols()  
-      calculate_returns_function(stock_prices(), weights_tbl = stock_weights_tbl, timePeriod = input$input_timePeriod)
+      #stock_weights_tbl <- stock_symbols()  
+      calculate_returns_function(stock_prices(), weights_tbl = stock_weights_tbl(), timePeriod = input$input_timePeriod)
     })
     
     
@@ -472,6 +483,18 @@ server <- function(input, output,session) {
     })
     
     output$returnsPlot <- renderPlotly(returns_chart())
+    
+    # 2.4 Component Contribution to Standard Deviation ----
+    contribution_tbl <- reactive({
+      returns_tbl() %>% 
+        component_contribution_function(stock_weights_tbl(),marketAsset = input$input_market)
+    })
+    
+    component_contribution <- reactive({
+      bar_chart_function(contribution_tbl(),title = "Component Contribution to Standard Deviation")
+    })
+    
+    output$compContBar <- renderPlotly(component_contribution())
     
     # 2.5 Covariance ----
     

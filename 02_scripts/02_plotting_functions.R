@@ -30,6 +30,28 @@ line_chart_function <- function(data,
     
 }
 
+# 2.0 Bar Charts ----
+bar_chart_function <- function(data,title){
+    
+    g <- data %>% 
+        ggplot(aes(asset,contribution_formatted, label = label_text)) +
+        geom_col(aes(fill = asset)) +
+        geom_text(aes(label=contribution_formatted, vjust= -8)) +
+        labs(
+            x = '',
+            y = '',
+            title = title
+        ) +
+        theme_tufte() +
+        coord_flip() +
+        theme(
+            axis.text.x = element_blank(),
+            legend.position = "none"
+        )
+    
+    ggplotly(g, tooltip = c("label"))
+        
+}
 
 # 
 # # Testing ----

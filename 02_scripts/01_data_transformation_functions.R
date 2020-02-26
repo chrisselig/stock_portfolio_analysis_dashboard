@@ -90,13 +90,58 @@ rolling_calculation_function <- function(data, window, .func, func_label){
                                     Date: {date}'))
 }
 
+# 3.0 Component Contribution Calculations ----
+component_contribution_function <- function(data,weights_tbl,marketAsset){
+    
+    covar_matrix <- data %>% 
+        filter(asset != marketAsset) %>% 
+        filter(asset != 'Portfolio') %>% 
+        select(-c(label_text,returns_formatted)) %>% 
+        pivot_wider(
+            names_from = asset,
+            values_from = returns
+        ) %>%
+        select(-date) %>% 
+        cov()    
+        
+    weights <- weights_tbl %>% 
+        select(weights) %>% 
+        mutate(weights = as.numeric(as.character(weights))) %>% 
+        slice(1:(n()-1)) %>% 
+        pull()
+    
+    sd_portfolio <- sqrt(t(weights) %*% covar_matrix %*% weights)
+    
+     marginal_contribution <- weights %*% covar_matrix / sd_portfolio[1,1]
+     
+     component_contribution <- marginal_contribution * weights
+     
+     component_percentages <- component_contribution/sd_portfolio[1,1]
+      
+     component_percentages_tbl <- component_percentages %>% 
+          as_tibble() %>% 
+          pivot_longer(
+              cols = 1:3,
+              names_to = 'asset',
+              values_to = 'contribution'
+          ) %>% 
+          mutate(contribution_formatted = scales::percent(contribution,accuracy = 0.01)) %>% 
+          mutate(label_text = str_glue('Asset: {asset}
+                                      Contribution: {contribution_formatted}')
+          )
+    
+    return(component_percentages_tbl)
+    # return(weights)
+}
 
 
-# 3.0 Simulation Functions ----
 
+# 4.0 Simulation Functions ----
 
+# 5.0 Other Functions ----
+#as_numeric_factor_function <- function(x) {as.numeric(levels(x))[x]}
  
-# 4.0 Testing----
+# 5.0 Testing----
 # 
 #  library(quantmod)
 #  library(tidyverse)
@@ -108,13 +153,16 @@ rolling_calculation_function <- function(data, window, .func, func_label){
 #  data <- na.omit(data)
 #  weights_tbl <- data.frame(symbols, weights)
 #  timePeriod = "monthly"
-#  
+# 
 #  startDate = "2015-01-01"
 #  endDate = "2019-12-31"
-#  
+# 
 #  prices <- get_stock_data_function(data, startDate = "2015-01-01", endDate = "2019-12-31")
-#  
+# 
 #  data <- prices
-#  weighted_returns <- calculate_returns_function(prices,data,timePeriod = "monthly")
+#  data <- calculate_returns_function(prices,weights_tbl = weights_tbl,timePeriod = "monthly")
 # 
 #  x <- rolling_calculation_function(weighted_returns_tbl, window = 24,.func = sd, func_label = "Standard Dev.")
+# 
+# marketAsset <- 'SPY'
+
