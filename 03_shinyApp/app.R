@@ -346,14 +346,13 @@ ui <- navbarPage(
                   # 2.5 Visualize Covariance ----
                   column(
                     width = 6,
-                    # 2.5.2 Visualize Covariance ----
+                    
                     tabsetPanel(
                       type = "tabs",
-                      tabPanel("Covariance",plotlyOutput("covar_plot"))
-                    ),
-                    tabsetPanel(
-                      type = "tabs",
-                      tabPanel("Correlation",plotlyOutput("cor_tot"))
+                      # 2.5.2 Visualize Covariance ----
+                      tabPanel("Covariance",plotlyOutput("covar_plot")),
+                      # 2.5.3 Visualize Correlation ----
+                      tabPanel("Correlation",plotlyOutput("cor_plot"))
                     )
                   )
                 )
