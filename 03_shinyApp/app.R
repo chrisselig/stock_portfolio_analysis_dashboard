@@ -156,53 +156,53 @@ ui <- navbarPage(
               )
             ),
 
-            hr(),
+            #hr(),
             
             # 1.1.8 Simulation Inputs ----
             # 1.1.8.1 Period & Number of Sims ----
-            h2("Simulation Inputs"),
-            fluidRow(
-              column(
-                width = 4,
-                numericInput(
-                  inputId = "input_num_periods",
-                  label = "Periods to Simulate",
-                  value = 12L,
-                  min = 1L
-                )
-              ),
-              column(
-                width = 4,
-                numericInput(
-                  inputId = "input_num_sims",
-                  label = "# of Sims",
-                  value = 100L,
-                  min =1L,
-                  max = 100000L,
-                  step = 50L
-                )
-              ),
-              column(
-                width = 3,
-                numericInput(
-                  inputId = "input_portfolio_value",
-                  label = "Portfolio Value",
-                  value = 1000,
-                  min = 0
-                )
-              )
-            ),
-            
-            # 1.1.8.2 Simulate Button ----
-            fluidRow(
-              column(
-                width = 6,
-                actionButton(
-                  inputId = "btn_simualate",
-                  label = "Simulate"
-                )
-              )
-            ),
+            # h2("Simulation Inputs"),
+            # fluidRow(
+            #   column(
+            #     width = 4,
+            #     numericInput(
+            #       inputId = "input_num_periods",
+            #       label = "Periods to Simulate",
+            #       value = 12L,
+            #       min = 1L
+            #     )
+            #   ),
+            #   column(
+            #     width = 4,
+            #     numericInput(
+            #       inputId = "input_num_sims",
+            #       label = "# of Sims",
+            #       value = 100L,
+            #       min =1L,
+            #       max = 100000L,
+            #       step = 50L
+            #     )
+            #   ),
+            #   column(
+            #     width = 3,
+            #     numericInput(
+            #       inputId = "input_portfolio_value",
+            #       label = "Portfolio Value",
+            #       value = 1000,
+            #       min = 0
+            #     )
+            #   )
+            # ),
+            # 
+            # # 1.1.8.2 Simulate Button ----
+            # fluidRow(
+            #   column(
+            #     width = 6,
+            #     actionButton(
+            #       inputId = "btn_simualate",
+            #       label = "Simulate"
+            #     )
+            #   )
+            # ),
             
             hr(),
             
@@ -346,10 +346,14 @@ ui <- navbarPage(
                   # 2.5 Visualize Covariance ----
                   column(
                     width = 6,
-                    # 2.5.2 Visualize Rolling Covariance ----
+                    # 2.5.2 Visualize Covariance ----
                     tabsetPanel(
                       type = "tabs",
-                      tabPanel("Rolling Covariance",plotlyOutput("rollingcovar"))
+                      tabPanel("Covariance",plotlyOutput("covar_plot"))
+                    ),
+                    tabsetPanel(
+                      type = "tabs",
+                      tabPanel("Correlation",plotlyOutput("cor_tot"))
                     )
                   )
                 )
@@ -366,21 +370,21 @@ ui <- navbarPage(
                 tableOutput('links')
               )
             )
-        ),
+        )
         
         # 3.0 Portfolio Simulation Tab ----
-        tabPanel(
-            class = "tabPanel",
-            "PORTFOLIO SIMULATION",
-            
-            fluidRow(
-              tableOutput(outputId = 'returns_tbl')
-            ),
-            hr(),
-            fluidRow(
-              tableOutput(outputId = 'stocksymbol')
-            )
-        )
+        # tabPanel(
+        #     class = "tabPanel",
+        #     "PORTFOLIO SIMULATION",
+        #     
+        #     fluidRow(
+        #       tableOutput(outputId = 'returns_tbl')
+        #     ),
+        #     hr(),
+        #     fluidRow(
+        #       tableOutput(outputId = 'stocksymbol')
+        #     )
+        # )
      )
 
 # Server Logic ----
@@ -485,22 +489,44 @@ server <- function(input, output,session) {
     output$returnsPlot <- renderPlotly(returns_chart())
     
     # 2.4 Component Contribution to Standard Deviation ----
-    contribution_tbl <- reactive({
+    component_contribution <- reactive({
       returns_tbl() %>% 
-        component_contribution_function(stock_weights_tbl(),marketAsset = input$input_market)
+        tidy_data_for_covar_cor_function(marketAsset = input$input_market) %>% 
+        covariance_function() %>% 
+        component_contribution_function(stock_weights_tbl()) %>% 
+        bar_chart_function(title = "Component Contribution to Standard Deviation")
     })
     
-    component_contribution <- reactive({
-      bar_chart_function(contribution_tbl(),title = "Component Contribution to Standard Deviation")
-    })
+    # component_contribution <- reactive({
+    #   bar_chart_function(contribution_tbl(),title = "Component Contribution to Standard Deviation")
+    # })
     
     output$compContBar <- renderPlotly(component_contribution())
     
+
     # 2.5 Covariance ----
     
     # 2.5.1 Total Covariance ----
+    covar_tot <- reactive({
+      tidy_data_for_covar_cor_function(data = returns_tbl(),marketAsset = input$input_market) %>% 
+        covariance_function() %>% 
+        matrix_to_df_function() %>% 
+        heat_map_function(title = "Covariance Matrix")
+    })
     
-    # 2.5.2 Rolling Covariance ----
+    output$covar_plot <- renderPlotly(covar_tot())
+    
+    # 2.5.2 Total Correlation ----
+    cor_tot <- reactive({
+      tidy_data_for_covar_cor_function(data = returns_tbl(),marketAsset = input$input_market) %>% 
+        correlation_function() %>% 
+        matrix_to_df_function() %>% 
+        heat_map_function(title = "Correlation Matrix")
+    })
+    
+    output$cor_plot <- renderPlotly(cor_tot())
+    
+    # 2.5.3 Rolling Covariance ----
     rolling_covar <- reactive({
       rolling_calculation_function(returns_tbl(), window = input$input_window,.func = cov,func_label = "Covariance")
     })
@@ -528,28 +554,7 @@ server <- function(input, output,session) {
     # observeEvent(input$filter_selector, {
     #     shinyjs::toggle(id = "filter-panel", anim = TRUE, animType = "slide")
     # })
-    # Simulation plot ----
-    # sims <- eventReactive(input$btn_simulate, {input$input_num_sims})
-    # 
-    # monte_carlo_sims <- eventReactive(input$btn_simulate, { 
-    #     
-    #     sims <- sims()
-    #     
-    #     starts <-  
-    #         rep(1, sims) %>%
-    #         set_names(paste("sim", 1:sims, sep = ""))
-    #     
-    #     map_dfc(starts, simulation_accum_1,
-    #             N = input$sim_months, mean = mean_port_return(), 
-    #             stdev = stddev_port_return()) %>% 
-    #         mutate(month = seq(1:nrow(.))) %>% 
-    #         select(month, everything()) %>% 
-    #         `colnames<-`(c("month", names(starts))) %>% 
-    #         gather(sim, growth, -month) %>% 
-    #         group_by(sim) %>% 
-    #         mutate_all(funs(round(., 2)))
-    #     
-    # })
+
     
 }
 

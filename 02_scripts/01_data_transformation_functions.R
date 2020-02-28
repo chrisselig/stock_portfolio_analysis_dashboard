@@ -90,20 +90,66 @@ rolling_calculation_function <- function(data, window, .func, func_label){
                                     Date: {date}'))
 }
 
+# 3.0 Covariance and Correlation Functions ----
+
+tidy_data_for_covar_cor_function <- function(data,marketAsset){
+  
+  long_data <- data %>% 
+    filter(asset != marketAsset) %>% 
+    filter(asset != 'Portfolio') %>% 
+    select(-c(label_text,returns_formatted)) %>% 
+    pivot_wider(
+      names_from = asset,
+      values_from = returns
+    ) %>%
+    select(-date)
+  
+  return(long_data)
+}
+
+covariance_function <- function(data){
+  
+  covar_matrix <- data %>% 
+    cov()
+  
+  return(covar_matrix)
+}
+
+correlation_function <- function(data){
+  correlation_matrix <- data %>% 
+    cor()
+  
+  return(correlation_matrix)
+}
+
+matrix_to_df_function <- function(matrix){
+  
+  matrix_tbl <- matrix %>% 
+    as.data.frame() %>% 
+    rownames_to_column(var = "var1") %>% 
+    pivot_longer(
+      cols = 2:length(.),
+      names_to = "var2"
+    ) %>% 
+    mutate(value = round(value,3))
+  
+  return(matrix_tbl)
+}
+
 # 3.0 Component Contribution Calculations ----
-component_contribution_function <- function(data,weights_tbl,marketAsset){
-    
-    covar_matrix <- data %>% 
-        filter(asset != marketAsset) %>% 
-        filter(asset != 'Portfolio') %>% 
-        select(-c(label_text,returns_formatted)) %>% 
-        pivot_wider(
-            names_from = asset,
-            values_from = returns
-        ) %>%
-        select(-date) %>% 
-        cov()    
-        
+component_contribution_function <- function(covar_matrix,weights_tbl){
+    # 
+    # covar_matrix <- data %>% 
+    #     filter(asset != marketAsset) %>% 
+    #     filter(asset != 'Portfolio') %>% 
+    #     select(-c(label_text,returns_formatted)) %>% 
+    #     pivot_wider(
+    #         names_from = asset,
+    #         values_from = returns
+    #     ) %>%
+    #     select(-date) %>% 
+    #     cov()    
+    #     
     weights <- weights_tbl %>% 
         select(weights) %>% 
         mutate(weights = as.numeric(as.character(weights))) %>% 
@@ -131,9 +177,7 @@ component_contribution_function <- function(data,weights_tbl,marketAsset){
           )
     
     return(component_percentages_tbl)
-    # return(weights)
 }
-
 
 
 # 4.0 Simulation Functions ----
@@ -142,27 +186,31 @@ component_contribution_function <- function(data,weights_tbl,marketAsset){
 #as_numeric_factor_function <- function(x) {as.numeric(levels(x))[x]}
  
 # 5.0 Testing----
-# 
-#  library(quantmod)
-#  library(tidyverse)
-#  library(tibbletime)
-#   
-#  symbols <- c("TSLA","AAPL",'QLD')
-#  weights <- c(35,20,25)
-#  data <- data.frame(symbols, weights)
-#  data <- na.omit(data)
-#  weights_tbl <- data.frame(symbols, weights)
-#  timePeriod = "monthly"
-# 
-#  startDate = "2015-01-01"
-#  endDate = "2019-12-31"
-# 
-#  prices <- get_stock_data_function(data, startDate = "2015-01-01", endDate = "2019-12-31")
-# 
-#  data <- prices
-#  data <- calculate_returns_function(prices,weights_tbl = weights_tbl,timePeriod = "monthly")
-# 
-#  x <- rolling_calculation_function(weighted_returns_tbl, window = 24,.func = sd, func_label = "Standard Dev.")
-# 
-# marketAsset <- 'SPY'
+# # 
+#   library(quantmod)
+#   library(tidyverse)
+#   library(tibbletime)
+# # 
+#   symbols <- c("TSLA","AAPL",'QLD')
+#   weights <- c(35,20,25)
+#   data <- data.frame(symbols, weights)
+#   data <- na.omit(data)
+#   weights_tbl <- data.frame(symbols, weights)
+#   timePeriod = "monthly"
+# # 
+#   startDate = "2015-01-01"
+#   endDate = "2019-12-31"
+# # 
+#   prices <- get_stock_data_function(data, startDate = "2015-01-01", endDate = "2019-12-31")
+# # 
+#   data <- prices
+#   data <- calculate_returns_function(prices,weights_tbl = weights_tbl,timePeriod = "monthly")
+# # 
+#   x <- rolling_calculation_function(weighted_returns_tbl, window = 24,.func = sd, func_label = "Standard Dev.")
+#  
+#  marketAsset <- 'SPY'
+#  
+#  covar_matrix <- tidy_data_for_covar_cor_function(data,marketAsset = 'SPY') %>% 
+#    covariance_function()
 
+# covar_tbl <- matrix_to_df_function(matrix = covar_matrix)

@@ -53,6 +53,26 @@ bar_chart_function <- function(data,title){
         
 }
 
+# 3.0 Heatmaps ----
+
+heat_map_function <- function(data, title = "title") {
+    
+    g <- data %>% 
+        ggplot(aes(x=var1, y=var2, fill=value,label= value)) +
+        geom_tile() +
+        geom_text(color = "white") +
+        theme_tufte() +
+        labs(
+            title = title,
+            x = '',
+            y = ''
+        ) +
+        theme(
+            legend.title = element_blank()
+        )
+    
+    ggplotly(g)
+}
 # 
 # # Testing ----
 # library(quantmod)
@@ -77,3 +97,5 @@ bar_chart_function <- function(data,title){
 # y_axis <- returns_tbl$returns
 # y_axis_label <- 'Log Returns'
 # title = 'Log Returns for Selected Assets'
+
+data = covar_tbl
