@@ -297,7 +297,8 @@ ui <- navbarPage(
             # actionButton(inputId = "filter_selector","Show/Hide Filters"),
             # * CSS ----
             tags$head(
-                tags$link(rel = "stylesheet", type = "text/css", href = "styles.css")
+                tags$link(rel = "stylesheet", type = "text/css", href = "styles.css"),
+                tags$link(href="https://fonts.googleapis.com/css?family=Old+Standard+TT:400,700&display=swap", rel="stylesheet")
             ),
             
             # * JS ----
@@ -365,25 +366,45 @@ ui <- navbarPage(
                 h2('Further Information for Selected Assets')
               ),
               fluidRow(
-                # htmlOutput()
-                tableOutput('links')
+                class = "infoLinks",
+                uiOutput('links1')
+              ),
+              br(),
+              fluidRow(
+                class = "infoLinks",
+                uiOutput('links2')
+              ),
+              br(),
+              fluidRow(
+                class = "infoLinks",
+                uiOutput('links3')
+              ),
+              br(),
+              fluidRow(
+                class = "infoLinks",
+                uiOutput('links4')
+              ),
+              br(),
+              fluidRow(
+                class = "infoLinks",
+                uiOutput('links5')
               )
             )
-        ),
+        )
         
         # 3.0 Portfolio Simulation Tab ----
-        tabPanel(
-            class = "tabPanel",
-            "PORTFOLIO SIMULATION",
-
-            fluidRow(
-              tableOutput(outputId = 'returns_tbl')
-            ),
-            hr(),
-            fluidRow(
-              # tableOutput(outputId = 'compContbar')
-            )
-        )
+        # tabPanel(
+        #     class = "tabPanel",
+        #     "PORTFOLIO SIMULATION",
+        # 
+        #     fluidRow(
+        #       #uiOutput('links')
+        #     ),
+        #     hr(),
+        #     fluidRow(
+        #       tableOutput(outputId = 'tableLinks')
+        #     )
+        # )
      )
 
 # Server Logic ----
@@ -536,14 +557,40 @@ server <- function(input, output,session) {
     output$rollingcovar <- renderPlotly(rolling_covar_chart())
     
     # 2.6 Links to Quote Pages at Yahoo Finance ----
-    links_tbl <- reactive({
-      stock_symbols()$symbols %>% 
-        mutate(symbols2 = as.character(symbols2)) %>% 
-        filter(symbols2 == 'Portfolio') %>% 
-        mutate(website_link = paste0('https://finance.yahoo.com/quote/',symbols2))
+    url1 <- reactive({
+      a(input$input_stock1, href=paste0("https://finance.yahoo.com/quote/",input$input_stock1), target = '_blank')
+      
+    })
+
+    output$links1 <- renderUI({tagList(url1())})
+    
+    url2 <- reactive({
+      a(input$input_stock2, href=paste0("https://finance.yahoo.com/quote/",input$input_stock2), target = '_blank')
+      
     })
     
-    output$links <- renderTable(links_tbl())
+    output$links2 <- renderUI({tagList(url2())})
+    
+    url3 <- reactive({
+      a(input$input_stock3, href=paste0("https://finance.yahoo.com/quote/",input$input_stock3), target = '_blank')
+      
+    })
+    
+    output$links3 <- renderUI({tagList(url3())})
+    
+    url4 <- reactive({
+      a(input$input_stock4, href=paste0("https://finance.yahoo.com/quote/",input$input_stock4), target = '_blank')
+      
+    })
+    
+    output$links4 <- renderUI({tagList(url4())})
+    
+    url5 <- reactive({
+      a(input$input_stock5, href=paste0("https://finance.yahoo.com/quote/",input$input_stock5), target = '_blank')
+      
+    })
+    
+    output$links5 <- renderUI({tagList(url5())})
     # output$value <- renderText({input$input_stock1})
     # # Show/Hide Filter Bar ----
     # observeEvent(input$filter_selector, {
