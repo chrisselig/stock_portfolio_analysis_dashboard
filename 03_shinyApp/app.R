@@ -369,21 +369,21 @@ ui <- navbarPage(
                 tableOutput('links')
               )
             )
-        )
+        ),
         
         # 3.0 Portfolio Simulation Tab ----
-        # tabPanel(
-        #     class = "tabPanel",
-        #     "PORTFOLIO SIMULATION",
-        #     
-        #     fluidRow(
-        #       tableOutput(outputId = 'returns_tbl')
-        #     ),
-        #     hr(),
-        #     fluidRow(
-        #       tableOutput(outputId = 'stocksymbol')
-        #     )
-        # )
+        tabPanel(
+            class = "tabPanel",
+            "PORTFOLIO SIMULATION",
+
+            fluidRow(
+              tableOutput(outputId = 'returns_tbl')
+            ),
+            hr(),
+            fluidRow(
+              # tableOutput(outputId = 'compContbar')
+            )
+        )
      )
 
 # Server Logic ----
@@ -415,9 +415,6 @@ server <- function(input, output,session) {
       calculate_returns_function(stock_prices(), weights_tbl = stock_weights_tbl(), timePeriod = input$input_timePeriod)
     })
     
-    
-    output$returns_tbl <- renderTable(returns_tbl())
-    output$stocksymbol <- renderTable(stock_prices())
     
     # 2.0 Portfolio Analysis Tab ----
     # 2.1 KPI's ----
@@ -492,15 +489,14 @@ server <- function(input, output,session) {
       returns_tbl() %>% 
         tidy_data_for_covar_cor_function(marketAsset = input$input_market) %>% 
         covariance_function() %>% 
-        component_contribution_function(stock_weights_tbl()) %>% 
+        component_contribution_function(stock_weights_tbl(), marketAsset = input$input_market) %>% 
         bar_chart_function(title = "Component Contribution to Standard Deviation")
     })
     
-    # component_contribution <- reactive({
-    #   bar_chart_function(contribution_tbl(),title = "Component Contribution to Standard Deviation")
-    # })
-    
+
+    # output$stock_weights <- renderTable(stock_weights_tbl())
     output$compContBar <- renderPlotly(component_contribution())
+    # output$compContbar <- renderTable(component_contribution())
     
 
     # 2.5 Covariance ----

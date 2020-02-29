@@ -98,4 +98,4 @@ heat_map_function <- function(data, title = "title") {
 # y_axis_label <- 'Log Returns'
 # title = 'Log Returns for Selected Assets'
 
-data = covar_tbl
+# data = covar_tbl

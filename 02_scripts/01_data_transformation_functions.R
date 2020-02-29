@@ -137,7 +137,7 @@ matrix_to_df_function <- function(matrix){
 }
 
 # 3.0 Component Contribution Calculations ----
-component_contribution_function <- function(covar_matrix,weights_tbl){
+component_contribution_function <- function(covar_matrix,weights_tbl,marketAsset){
     # 
     # covar_matrix <- data %>% 
     #     filter(asset != marketAsset) %>% 
@@ -151,9 +151,11 @@ component_contribution_function <- function(covar_matrix,weights_tbl){
     #     cov()    
     #     
     weights <- weights_tbl %>% 
+      
+        filter(symbols != marketAsset) %>%
         select(weights) %>% 
         mutate(weights = as.numeric(as.character(weights))) %>% 
-        slice(1:(n()-1)) %>% 
+        slice(1:(n())) %>% 
         pull()
     
     sd_portfolio <- sqrt(t(weights) %*% covar_matrix %*% weights)
@@ -167,7 +169,7 @@ component_contribution_function <- function(covar_matrix,weights_tbl){
      component_percentages_tbl <- component_percentages %>% 
           as_tibble() %>% 
           pivot_longer(
-              cols = 1:3,
+              cols = 1:length(.),
               names_to = 'asset',
               values_to = 'contribution'
           ) %>% 
@@ -187,30 +189,34 @@ component_contribution_function <- function(covar_matrix,weights_tbl){
  
 # 5.0 Testing----
 # # 
-#   library(quantmod)
-#   library(tidyverse)
-#   library(tibbletime)
+#    library(quantmod)
+#    library(tidyverse)
+#    library(tibbletime)
+# # #
+#    symbols <- c("TSLA","AAPL",'QLD','RTN','SPY')
+#    weights <- c(30,20,25,25,100)
+#    data <- data.frame(symbols, weights)
+#    data <- na.omit(data)
+#    weights_tbl <- data.frame(symbols, weights)
+#    timePeriod = "monthly"
+#  #
+#    startDate = "2015-01-01"
+#    endDate = "2019-12-31"
+#  #
+#    prices <- get_stock_data_function(data, startDate = "2015-01-01", endDate = "2019-12-31")
+#  #
+#    data <- prices
+#    data <- calculate_returns_function(prices,weights_tbl = weights_tbl,timePeriod = "monthly")
+#  #
+#    # x <- rolling_calculation_function(weighted_returns_tbl, window = 24,.func = sd, func_label = "Standard Dev.")
+# #
+#   marketAsset <- 'SPY'
+# #
+# 
+# # covar_tbl <- matrix_to_df_function(matrix = covar_matrix)
 # # 
-#   symbols <- c("TSLA","AAPL",'QLD')
-#   weights <- c(35,20,25)
-#   data <- data.frame(symbols, weights)
-#   data <- na.omit(data)
-#   weights_tbl <- data.frame(symbols, weights)
-#   timePeriod = "monthly"
-# # 
-#   startDate = "2015-01-01"
-#   endDate = "2019-12-31"
-# # 
-#   prices <- get_stock_data_function(data, startDate = "2015-01-01", endDate = "2019-12-31")
-# # 
-#   data <- prices
-#   data <- calculate_returns_function(prices,weights_tbl = weights_tbl,timePeriod = "monthly")
-# # 
-#   x <- rolling_calculation_function(weighted_returns_tbl, window = 24,.func = sd, func_label = "Standard Dev.")
-#  
-#  marketAsset <- 'SPY'
-#  
-#  covar_matrix <- tidy_data_for_covar_cor_function(data,marketAsset = 'SPY') %>% 
-#    covariance_function()
-
-# covar_tbl <- matrix_to_df_function(matrix = covar_matrix)
+#    covar_matrix <- data %>%
+#      tidy_data_for_covar_cor_function(marketAsset = 'SPY') %>%
+#      covariance_function() %>%
+#      component_contribution_function(weights_tbl = weights_tbl,marketAsset = 'SPY')
+  
