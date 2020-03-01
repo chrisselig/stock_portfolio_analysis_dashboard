@@ -1,6 +1,11 @@
 # Portfolio Analysis Dashboard
 Goal is to provide some analysis of indiviual assets as well as a portfolio.
 
+Analysis is completed using the R programming language and visualized in a Shiny app.
+
+The app can be found here:
+
+
 # Future additions:
 1. Add kpi cards on Portfolio analysis tab
     a.  include ability to hide them
