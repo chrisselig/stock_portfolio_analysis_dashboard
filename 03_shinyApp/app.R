@@ -33,10 +33,21 @@ source("../02_scripts/01_data_transformation_functions.R")
 source("../02_scripts/02_plotting_functions.R")
 
 # Define UI for application that draws a histogram
-ui <- navbarPage(
+ui <- 
+  tagList(
+    # * CSS ----
+    tags$head(
+      tags$link(rel = "stylesheet", type = "text/css", href = "styles.css"),
+      tags$link(href="https://fonts.googleapis.com/css?family=Old+Standard+TT:400,700&display=swap", rel="stylesheet")
+    ),
+    
+    # * JS ----
+    shinyjs::useShinyjs(),
+
+  navbarPage(
   
         #position = "fixed-bottom",
-        title = "",
+        title = "Portfolio Analysis by Chris Selig",
     
     # inverse= TRUE,
     collapsible = TRUE,
@@ -214,7 +225,8 @@ ui <- navbarPage(
                 width = 6,
                 actionButton(
                   inputId = "btn_reset_defaults",
-                  label = "Reset to Defaults"
+                  label = "Reset to Defaults",
+                  icon = icon("sync")
                   #)
                   #)
                 )
@@ -297,14 +309,7 @@ ui <- navbarPage(
             class = "tabPanel",
             "PORTFOLIO ANALYSIS",
             # actionButton(inputId = "filter_selector","Show/Hide Filters"),
-            # * CSS ----
-            tags$head(
-                tags$link(rel = "stylesheet", type = "text/css", href = "styles.css"),
-                tags$link(href="https://fonts.googleapis.com/css?family=Old+Standard+TT:400,700&display=swap", rel="stylesheet")
-            ),
-            
-            # * JS ----
-            shinyjs::useShinyjs(),
+
             column(
               width = 10,
               div(
@@ -406,13 +411,13 @@ ui <- navbarPage(
         #     fluidRow(
         #       tableOutput(outputId = 'tableLinks')
         #     )
-        # )
+        )
      )
 
 # Server Logic ----
 server <- function(input, output,session) {
     
-    # Get List of Stocks and Weights ----
+    # 1.0 Get List of Stocks and Weights ----
     stock_symbols <- eventReactive(input$btn_calculate,{
         symbols <- c(input$input_stock1, input$input_stock2, input$input_stock3, input$input_stock4, input$input_stock5,input$input_market)
         weights <- c(input$input_stock1_weight/100,input$input_stock2_weight/100,input$input_stock3_weight/100,input$input_stock4_weight/100,input$input_stock5_weight/100,100/100)
@@ -420,21 +425,49 @@ server <- function(input, output,session) {
           na.omit()
     },ignoreNULL = FALSE)
   
-    # Get Weights ----
+    # 1.1 Get Weights ----
     stock_weights_tbl <- reactive({
       stock_symbols()
     })
     
-    # Get Stock Prices ----
+    # 1.2 Get Stock Prices ----
     stock_prices <- reactive({
         get_stock_data_function(stock_symbols(), startDate = input$input_start_date, endDate = input$input_end_date)
     })
 
-    # Tidy Stock Prices & Calculate Log Returns ----
+    # 1.3 Tidy Stock Prices & Calculate Log Returns ----
     returns_tbl <- reactive({
       calculate_returns_function(stock_prices(), weights_tbl = stock_weights_tbl(), timePeriod = input$input_timePeriod)
     })
     
+    # 1.4 Reset to Defaults ----
+    observeEvent(eventExpr = input$btn_reset_defaults, handlerExpr = {
+      
+      # Stock 1
+      updateTextInput(session = session, inputId = "input_stock1", value = "AAPL")
+      updateNumericInput(session = session, inputId = "input_stock1_weight", value = 25)
+      
+      # Stock 2
+      updateTextInput(session = session, inputId = "input_stock2", value = "TSLA")
+      updateNumericInput(session = session, inputId = "input_stock2_weight", value = 25)
+      
+      # Stock 3
+      updateTextInput(session = session, inputId = "input_stock3", value = "QLD")
+      updateNumericInput(session = session, inputId = "input_stock3_weight", value = 50)
+      
+      # Stock 4
+      updateTextInput(session = session, inputId = "input_stock4", value = NA_character_)
+      updateNumericInput(session = session, inputId = "input_stock4_weight", value = NA_integer_)
+      
+      # Stock 5
+      updateTextInput(session = session, inputId = "input_stock5", value = NA_character_)
+      updateNumericInput(session = session, inputId = "input_stock5_weight", value = NA_integer_)
+      
+      delay(ms = 300, expr = {
+        click(id = "apply")
+      })
+      
+    })
     
     # 2.0 Portfolio Analysis Tab ----
     # 2.1 KPI's ----
