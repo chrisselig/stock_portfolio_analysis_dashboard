@@ -19,6 +19,7 @@ line_chart_function <- function(data,
             labels = scales::number_format(accuracy = 0.01),
             breaks = scales::pretty_breaks(12)
         ) +
+        scale_color_jama() +
         scale_x_date(breaks = scales::pretty_breaks(12)) +
         theme(
             #plot.title = element_text(hjust = 0.5),
@@ -34,14 +35,15 @@ line_chart_function <- function(data,
 bar_chart_function <- function(data,title){
     
     g <- data %>% 
-        ggplot(aes(asset,contribution_formatted, label = label_text)) +
-        geom_col(aes(fill = asset)) +
+        ggplot(aes(reorder(asset,contribution),contribution_formatted,label = label_text)) +
+        geom_col(aes(fill = contribution)) +
         geom_text(aes(label=contribution_formatted, vjust= -8)) +
         labs(
             x = '',
             y = '',
             title = title
         ) +
+        scale_fill_gradient(low="#EBECED",high="#A2AAB0") +
         theme_tufte() +
         coord_flip() +
         theme(
@@ -60,13 +62,14 @@ heat_map_function <- function(data, title = "title") {
     g <- data %>% 
         ggplot(aes(x=var1, y=var2, fill=value,label= value)) +
         geom_tile() +
-        geom_text(color = "white") +
+        geom_text(color = "black") +
         theme_tufte() +
         labs(
             title = title,
             x = '',
             y = ''
         ) +
+        scale_fill_gradient(low="#A2AAB0",high="#EBECED") +
         theme(
             legend.title = element_blank()
         )

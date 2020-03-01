@@ -23,6 +23,8 @@ library(e1071)
 
 # Plotting functions
 library(ggthemes)
+# library(RColorBrewer)
+library(ggsci)
 library(plotly)
 
 
@@ -430,24 +432,13 @@ server <- function(input, output,session) {
 
     # Tidy Stock Prices & Calculate Log Returns ----
     returns_tbl <- reactive({
-        # timePeriod <- input$input_timePeriod
-        # weights <- c(input$input_stock1_weight,input$input_stock2_weight,input$input_stock3_weight,input$input_stock4_weight,input$input_stock5_weight)
-      #stock_weights_tbl <- stock_symbols()  
       calculate_returns_function(stock_prices(), weights_tbl = stock_weights_tbl(), timePeriod = input$input_timePeriod)
     })
     
     
     # 2.0 Portfolio Analysis Tab ----
     # 2.1 KPI's ----
-    # 2.1.1 Portfolio Standard Deviation ----
-    # portfolio_sd <- reactive({
-    #   returns_tbl() %>% 
-    #     round(sd(returns,na.rm = TRUE),4)
-    # })
-    # 
-    # output$portfolio_sd <- portfolio_sd()
-    # 
-    # Sum up weights to ensure it is not greater than 100% ----
+  
     
     # 2.2 Rolling Calculations ----
     # 2.2.1 Rolling Standard Deviation ----
