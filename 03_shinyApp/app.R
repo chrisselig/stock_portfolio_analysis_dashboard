@@ -276,7 +276,7 @@ ui <-
               selectInput(
                 inputId = "input_timePeriod",
                 label = "Returns Time Period",
-                choices = c('daily','weekly','monthly','yearly'),
+                choices = c('weekly','monthly','yearly'),
                 selected = "monthly"
               ),
             )
@@ -288,7 +288,7 @@ ui <-
                 width = 4,
                 actionButton(
                   inputId = "btn_calculate",
-                  label = "Analyze",
+                  label = "   Analyze",
                   icon = icon("calculator")
                 )
               )
@@ -300,7 +300,7 @@ ui <-
                 width = 6,
                 actionButton(
                   inputId = "btn_reset_defaults",
-                  label = "Reset to Defaults",
+                  label = "   Reset to Defaults",
                   icon = icon("sync")
                 )
               )
@@ -309,17 +309,6 @@ ui <-
           )
           
         ),
-        # column(
-        #   width = 3,
-        #   h2("Disclaimer"),
-        #   br(),
-        #   p("Seek real financial advice"),
-        #   br(),
-        #   h2("Information"),
-        #   p("Page is used to input the stocks for your portfolio")
-        # )
-        
-        
       ),
       
       # 2.0 Portfolio Analysis Tab ----

@@ -30,9 +30,6 @@ calculate_returns_function <- function(data,weights_tbl,timePeriod){
     if(timePeriod == "monthly"){
         data <- data %>% 
             to.monthly(indexAt = "lastof", OHLC = FALSE)
-    } else if(timePeriod == "daily") {
-        data <- data %>% 
-            to.daily(indexAt = "lastof", OHLC = FALSE)
     } else if(timePeriod == "weekly"){
         data <- data %>% 
             to.weekly(indexAt = "lastof", OHLC = FALSE)

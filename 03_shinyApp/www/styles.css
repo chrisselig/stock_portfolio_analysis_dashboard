@@ -14,6 +14,10 @@ body h2{
   background-color:#4C586F;
 }
 
+span .navbar-default .navbar-brand:hover{
+  color:red;
+}
+
 body{
   color:#A2AAB0;
 }
