@@ -1,0 +1,12 @@
+name: portfolio_analysis
+title: portfolio_analysis
+username:
+account: chris-selig
+server: shinyapps.io
+hostUrl: https://api.shinyapps.io/v1
+appId: 1916333
+bundleId: 2858944
+url: https://chris-selig.shinyapps.io/portfolio_analysis/
+when: 1583541680.08839
+asMultiple: FALSE
+asStatic: FALSE

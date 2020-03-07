@@ -28,8 +28,10 @@ library(plotly)
 
 
 # 0.1.4 Source Scripts ----
-source("../02_scripts/01_data_transformation_functions.R")
-source("../02_scripts/02_plotting_functions.R")
+source("01_data_transformation_functions.R")
+source("02_plotting_functions.R")
+# source("../02_scripts/01_data_transformation_functions.R")
+# source("../02_scripts/02_plotting_functions.R")
 
 # Define UI for application that draws a histogram
 ui <- 
