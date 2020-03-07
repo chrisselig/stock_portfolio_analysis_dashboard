@@ -6,29 +6,28 @@
 # Feb 2020 v1.0
 #
 
+# 0.1 Libraries ----
+# 0.1.1 Shiny Libraries ----
 library(shiny)
 library(shinyWidgets)
 library(shinythemes)
 library(shinyjs)
-#library(shinydashboard)
 
-# Data manipulation functions
+# 0.1.2 Data manipulation libraries
 library(quantmod)
 library(tidyverse)
-# library(tidyquant)
 library(tibbletime)
 library(lubridate)
 library(scales)
 library(e1071)
 
-# Plotting functions
+# 0.1.3 Plotting/Plot Formatting Libraries ----
 library(ggthemes)
-# library(RColorBrewer)
 library(ggsci)
 library(plotly)
 
 
-# Source Scripts ----
+# 0.1.4 Source Scripts ----
 source("../02_scripts/01_data_transformation_functions.R")
 source("../02_scripts/02_plotting_functions.R")
 
@@ -171,51 +170,6 @@ ui <-
           
           hr(),
           
-          # 1.1.8 Simulation Inputs ----
-          # 1.1.8.1 Period & Number of Sims ----
-          # h2("Simulation Inputs"),
-          # fluidRow(
-          #   column(
-          #     width = 4,
-          #     numericInput(
-          #       inputId = "input_num_periods",
-          #       label = "Periods to Simulate",
-          #       value = 12L,
-          #       min = 1L
-          #     )
-          #   ),
-          #   column(
-          #     width = 4,
-          #     numericInput(
-          #       inputId = "input_num_sims",
-          #       label = "# of Sims",
-          #       value = 100L,
-          #       min =1L,
-          #       max = 100000L,
-          #       step = 50L
-          #     )
-          #   ),
-          #   column(
-          #     width = 3,
-          #     numericInput(
-          #       inputId = "input_portfolio_value",
-          #       label = "Portfolio Value",
-          #       value = 1000,
-          #       min = 0
-          #     )
-          #   )
-          # ),
-          # 
-          # # 1.1.8.2 Simulate Button ----
-          # fluidRow(
-          #   column(
-          #     width = 6,
-          #     actionButton(
-          #       inputId = "btn_simualate",
-          #       label = "Simulate"
-          #     )
-          #   )
-          # ),
           fluidRow(
             h2("Disclaimer"),
             p(
@@ -230,7 +184,7 @@ ui <-
           
           
         ),
-        # 1.1.11 Market or Comparision Asset ----
+        # 1.1.6 Market or Comparision Asset ----
         column(
           width = 3,
           textInput(
@@ -240,7 +194,7 @@ ui <-
             value = 'SPY'
           ),
           
-          # 1.1.6 Start & End Dates ----
+          # 1.1.7 Start & End Dates ----
           fluidRow(
             column(
               width = 6,
@@ -260,7 +214,7 @@ ui <-
             )
           ),
           
-          # 1.1.7 Window & Calculate Button & Reset Buttons ----
+          # 1.1.8 Window & Calculate Button & Reset Buttons ----
           fluidRow(
             column(
               width = 4,
@@ -295,7 +249,7 @@ ui <-
             ),
             div(column(
               width = 4,
-              # 1.1.10 Reset Defaults ----
+              # 1.1.9 Reset Defaults ----
               column(
                 width = 6,
                 actionButton(
@@ -315,7 +269,6 @@ ui <-
       tabPanel(
         class = "tabPanel",
         "PORTFOLIO ANALYSIS",
-        # actionButton(inputId = "filter_selector","Show/Hide Filters"),
         
         column(
           width = 10,
@@ -445,7 +398,7 @@ ui <-
               br(),
               h4("Correlation"),
               p("Correlation measures how strong the relationshiop is between two assets. Close to 1 is a strong positive relationship.")
-              ),
+            ),
             
             # 3.2 Links to Concepts ----
             column(
@@ -453,16 +406,16 @@ ui <-
               h3("Further Information on Concepts"),
               br(),
               fluidRow(
-              tags$ul(
-                tags$li(a(href = "https://www.investopedia.com/ask/answers/042815/what-difference-between-expected-return-and-standard-deviation-portfolio.asp","Standard Deviation", target = "_blank")),
-                tags$li(a(href = "https://www.investopedia.com/terms/k/kurtosis.asp","Kurtosis", target = "_blank")),
-                tags$li(a(href = "https://www.investopedia.com/terms/s/skewness.asp","Skewness", target = "_blank")),
-                tags$li(a(href = "https://quantivity.wordpress.com/2011/02/21/why-log-returns/","Log Returns", target = "_blank")),
-                tags$li(a(href = "https://rviews.rstudio.com/2017/09/13/asset-contribution-to-portfolio-volatility/","Component Contribution", target = "_blank")),
-                tags$li(a(href = "https://www.investopedia.com/terms/c/covariance.asp","Covariance", target = "_blank")),
-                tags$li(a(href = "https://www.investopedia.com/terms/c/correlation.asp","Correlation", target = "_blank"))
-              )
-                ),
+                tags$ul(
+                  tags$li(a(href = "https://www.investopedia.com/ask/answers/042815/what-difference-between-expected-return-and-standard-deviation-portfolio.asp","Standard Deviation", target = "_blank")),
+                  tags$li(a(href = "https://www.investopedia.com/terms/k/kurtosis.asp","Kurtosis", target = "_blank")),
+                  tags$li(a(href = "https://www.investopedia.com/terms/s/skewness.asp","Skewness", target = "_blank")),
+                  tags$li(a(href = "https://quantivity.wordpress.com/2011/02/21/why-log-returns/","Log Returns", target = "_blank")),
+                  tags$li(a(href = "https://rviews.rstudio.com/2017/09/13/asset-contribution-to-portfolio-volatility/","Component Contribution", target = "_blank")),
+                  tags$li(a(href = "https://www.investopedia.com/terms/c/covariance.asp","Covariance", target = "_blank")),
+                  tags$li(a(href = "https://www.investopedia.com/terms/c/correlation.asp","Correlation", target = "_blank"))
+                )
+              ),
               fluidRow(
                 h3("Code"),
                 br(),
@@ -470,9 +423,9 @@ ui <-
                   p("To see the code for this Shiny app, please visit my ",a(href = "https://github.com/chrisselig/stock_portfolio_analysis_dashboard","Github page!")),
                   
                 )
-                )
-              
               )
+              
+            )
           )
         )
       )
@@ -536,7 +489,6 @@ server <- function(input, output,session) {
   
   # 2.0 Portfolio Analysis Tab ----
   # 2.1 KPI's ----
-  
   
   # 2.2 Rolling Calculations ----
   # 2.2.1 Rolling Standard Deviation ----
@@ -603,10 +555,7 @@ server <- function(input, output,session) {
       bar_chart_function(title = "Component Contribution to Standard Deviation")
   })
   
-  
-  # output$stock_weights <- renderTable(stock_weights_tbl())
   output$compContBar <- renderPlotly(component_contribution())
-  # output$compContbar <- renderTable(component_contribution())
   
   
   # 2.5 Covariance ----
@@ -680,11 +629,6 @@ server <- function(input, output,session) {
   })
   
   output$links5 <- renderUI({tagList(url5())})
-  # output$value <- renderText({input$input_stock1})
-  # # Show/Hide Filter Bar ----
-  # observeEvent(input$filter_selector, {
-  #     shinyjs::toggle(id = "filter-panel", anim = TRUE, animType = "slide")
-  # })
   
   
 }

@@ -1,8 +1,3 @@
-/* Hide Button 
-#hide_button{
-  float:right;
-}
-*/
 
 /* Body */
 body h2{
@@ -14,14 +9,17 @@ body h2{
   background-color:#4C586F;
 }
 
-span .navbar-default .navbar-brand:hover{
-  color:red;
+.navbar .navbar-nav li a:hover, .navbar1 .navbar-nav  .active a {
+  color: #EBECED !important;
+  background-color:#3E3E3B !important;
 }
 
+/* Body */
 body{
   color:#A2AAB0;
 }
 
+/* List items and links  */
 li a, div #links a, a{
   padding-top:0;
   padding-bottom:0;
@@ -29,19 +27,11 @@ li a, div #links a, a{
   color: #A2AAB0 !important;
 }
 
+/* Headers  */
 h2{
   color: #CBC5C1;
 }
 
 
-.navbar .navbar-nav li a:hover, .navbar1 .navbar-nav  .active a {
-  color: #EBECED !important;
-  background-color:#3E3E3B !important;
-}
-/*
-.btn{
-  font-size:0.7em;
-  padding:2px 10px 2px 10px;
-}
-*/
+
 

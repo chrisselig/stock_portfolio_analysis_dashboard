@@ -76,29 +76,3 @@ heat_map_function <- function(data, title = "title") {
     
     ggplotly(g)
 }
-# 
-# # Testing ----
-# library(quantmod)
-# library(tidyverse)
-# library(tibbletime)
-# library(scales)
-# library(ggthemes)
-# 
-# symbols <- c("TSLA","AAPL",'QLD')
-# weights <- c(35,20,25)
-# data <- data.frame(symbols, weights)
-# data <- na.omit(data)
-# 
-# startDate = "2015-01-01"
-# endDate = "2019-12-31"
-# 
-# prices <- get_stock_data_function(data, startDate = "2015-01-01", endDate = "2019-12-31")
-# 
-# returns_tbl <- calculate_returns_function(prices,data,timePeriod = "monthly")
-# 
-# data <- returns_tbl
-# y_axis <- returns_tbl$returns
-# y_axis_label <- 'Log Returns'
-# title = 'Log Returns for Selected Assets'
-
-# data = covar_tbl
