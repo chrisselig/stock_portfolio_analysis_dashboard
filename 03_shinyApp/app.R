@@ -14,7 +14,7 @@ library(shinythemes)
 library(shinyjs)
 
 # 0.1.2 Data manipulation libraries
-#library(quantmod)
+library(quantmod)
 library(tidyverse)
 library(tibbletime)
 library(lubridate)
