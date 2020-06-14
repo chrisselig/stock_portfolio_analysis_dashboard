@@ -1,4 +1,3 @@
-<<<<<<< HEAD
 #
 # Created by Chris Selig of BIDAMIA INC. ----
 # https://www.linkedin.com/in/chris-selig/
@@ -638,7 +637,7 @@ server <- function(input, output,session) {
 
 # Run the application 
 shinyApp(ui = ui, server = server)
-=======
+
 #
 # Created by Chris Selig of BIDAMIA INC. ----
 # https://www.linkedin.com/in/chris-selig/
@@ -1278,4 +1277,3 @@ server <- function(input, output,session) {
 
 # Run the application 
 shinyApp(ui = ui, server = server)
->>>>>>> c51cbbcabb93fa210bccc3e7c20b9953a3526905
